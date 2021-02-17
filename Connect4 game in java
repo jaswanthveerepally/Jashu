@@ -1,0 +1,176 @@
+import java.util.*;
+import java.util.Scanner;
+public class Main
+{
+  final static int ROW = 6;
+  final static int COLUMN = 7;
+  static boolean gameOver;
+  
+  public static String[][] drawTheGame()
+  {
+     String[][] gameBoard = new String[7][15];
+    for (int m =0;m<gameBoard.length;m++)
+    {
+       for (int n =0;n<gameBoard[m].length;n++)
+      {
+        if (n% 2 == 0) gameBoard[m][n] ="|";
+        else gameBoard[m][n] = " ";
+        if (m==6) gameBoard[m][n]= "_";
+      }
+    }
+    return gameBoard;
+  }
+  public static void printPattern(String[][] gameBoard)
+  {
+    for (int m =0; m < gameBoard.length;m++)
+    {
+      for (int n=0;n<gameBoard[m].length;n++)
+      {
+        System.out.print(gameBoard[m][n]);
+      }
+      System.out.println();
+    }
+  }
+  public static void dropBluePattern(String[][] gameBoard)
+  {
+    System.out.println("Which column do you put a disc into?: ");
+    Scanner s = new Scanner (System.in);
+    int a=s.nextInt();
+    if(a<0 || a>6)
+    {
+    	System.out.println("Please enter value from 0-6.");
+    }
+    else {
+    int c = 2 * a+1;
+    for (int m = 5; m >= 0; m--)
+    {
+      if (gameBoard[m][c] == " ")
+      {
+        gameBoard[m][c] = "B";
+        System.out.println("Player has placed a blue disc in row "+m+", column "+c);
+        break;
+      }
+      while (a >= 15 || a < 0) {
+          System.out.println("Out of bounds");
+          System.out.println("Please choose the number of a column from 0 to 5.");
+      a=s.nextInt();
+      }
+    }
+    }
+}
+  
+  public static void dropGreenForComputer(String[][] gameBoard)
+  {
+    Random rand = new Random();
+    int comp = rand.nextInt(6) + 0;
+    int c = 2 * comp+1;
+    for (int m = 5; m >= 0; m--)
+    {
+      if (gameBoard[m][c] == " ")
+      {
+        gameBoard[m][c] = "G";
+        break;
+      }
+    }
+  }
+  public static String checkWinner(String[][] gameBoard)
+  {
+    for (int m =0;m<6;m++)
+    {
+      for (int n=0;n<7;n+=2)
+      {
+        if ((gameBoard[m][n+1] != " ")
+        && (gameBoard[m][n+3] != " ")
+        && (gameBoard[m][n+5] != " ")
+        && (gameBoard[m][n+7] != " ")
+        && ((gameBoard[m][n+1] == gameBoard[m][n+3])
+        && (gameBoard[m][n+3] == gameBoard[m][n+5])
+        && (gameBoard[m][n+5] == gameBoard[m][n+7])))
+          return gameBoard[m][n+1];  
+      }
+    }
+    for (int m=1;m<15;m+=2)
+    {
+      for (int n =0;n<3;n++)
+      {
+            if((gameBoard[n][m] != " ")
+            && (gameBoard[n+1][m] != " ")
+            && (gameBoard[n+2][m] != " ")
+            && (gameBoard[n+3][m] != " ")
+            && ((gameBoard[n][m] == gameBoard[n+1][m])
+            && (gameBoard[n+1][m] == gameBoard[n+2][m])
+            && (gameBoard[n+2][m] == gameBoard[n+3][m])))
+              return gameBoard[n][m];  
+      }  
+    }
+    for (int m=0;m<3;m++)
+    {
+      for (int n=1;n<9;n+=2)
+      {
+            if((gameBoard[m][n] != " ")
+            && (gameBoard[m+1][n+2] != " ")
+            && (gameBoard[m+2][n+4] != " ")
+            && (gameBoard[m+3][n+6] != " ")
+            && ((gameBoard[m][n] == gameBoard[m+1][n+2])
+            && (gameBoard[m+1][n+2] == gameBoard[m+2][n+4])
+            && (gameBoard[m+2][n+4] == gameBoard[m+3][n+6])))
+              return gameBoard[m][n];  
+      }  
+    }
+    for (int m=0;m<3;m++)
+    {
+      for (int n=7;n<15;n+=2)
+      {
+            if((gameBoard[m][n] != " ")
+            && (gameBoard[m+1][n-2] != " ")
+            && (gameBoard[m+2][n-4] != " ")
+            && (gameBoard[m+3][n-6] != " ")
+            && ((gameBoard[m][n] == gameBoard[m+1][n-2])
+            && (gameBoard[m+1][n-2] == gameBoard[m+2][n-4])
+            && (gameBoard[m+2][n-4] == gameBoard[m+3][n-6])))
+              return gameBoard[m][n];  
+      }  
+    }
+    boolean gameover = true;
+    return null;
+  }
+  public static void main (String[] args)
+  {
+	
+    String[][] gameBoard = drawTheGame();
+    Main m=new Main();
+    Scanner sc=new Scanner(System.in);
+    String y;
+    boolean loop = true;
+    int count = 0;
+    printPattern(gameBoard);
+    while(loop)
+    {
+       if (count % 2 == 0) dropBluePattern(gameBoard);
+       else dropGreenForComputer(gameBoard);
+       count++;
+       printPattern(gameBoard);
+       if (checkWinner(gameBoard) != null)
+       {
+          if (checkWinner(gameBoard) == "B")
+             System.out.println("You won.");
+          else if (checkWinner(gameBoard)== "G")
+            System.out.println("The computer won.");
+	  else System.out.println("The game is draw.");
+         loop = false;
+       }
+       if(gameOver) {
+			char ans;
+			do {
+				System.out.println("Do you want to play again? ");
+				ans = sc.next().toLowerCase().charAt(0);
+			} while(ans != 'y' && ans != 'n');
+			
+			if(ans == 'y') { 
+				printPattern(gameBoard);
+			}
+		}
+
+    }
+  }
+}
